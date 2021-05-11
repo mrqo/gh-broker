@@ -50,7 +50,7 @@ public class RepoControllerTest {
             .expectBody()
                 .jsonPath("$.fullName").isEqualTo(model.getFullName())
                 .jsonPath("$.description").isEqualTo(model.getDescription())
-                .jsonPath("$.watchers").isEqualTo(model.getWatchers())
+                .jsonPath("$.stars").isEqualTo(model.getStars())
                 .jsonPath("$.createdAt").isNotEmpty();
 
         Mockito.verify(service, times(1)).getRepo(user, repoName);

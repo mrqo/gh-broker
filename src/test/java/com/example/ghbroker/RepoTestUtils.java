@@ -9,7 +9,7 @@ public class RepoTestUtils {
         model.setFullName(user + "/" + repoName);
         model.setDescription("description");
         model.setCreatedAt(Instant.now());
-        model.setWatchers(3);
+        model.setStars(3);
 
         return model;
     }
@@ -20,7 +20,7 @@ public class RepoTestUtils {
         model.setFullName(user + "/" + repoName);
         model.setDescription("desc2");
         model.setCreatedAt(Instant.now());
-        model.setWatchers(10);
+        model.setStars(10);
 
         return model;
     }

@@ -94,7 +94,7 @@ public class RepoCachingTest {
         RepoModel cachedModel = (RepoModel)cacheManager.getCache(RepoService.CACHE).get(cacheKey).get();
 
         Assert.state(
-            cachedModel.getWatchers() != secondModel.getWatchers(),
+            cachedModel.getStars() != secondModel.getStars(),
                 "Number of watchers in cache should be invalid"
         );
     }
