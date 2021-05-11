@@ -9,8 +9,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Signal;
 
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 @Service
 public class RepoService {
@@ -26,34 +24,34 @@ public class RepoService {
     }
 
     public Mono<RepoModel> getRepo(String owner, String repository) {
-
-
-
         return CacheMono
             .lookup(
-                repo -> {
-                    Object cacheModel = null;
-                    try {
-                        Cache.ValueWrapper cache = Objects.requireNonNull(cacheManager.getCache(CACHE)).get(repo);
-                        if (cache != null) {
-                            cacheModel = cache.get();
-                        }
-                    } catch (Exception e) {
-
-                    }
-
-                    if (cacheModel == null) {
-                        return Mono.<RepoModel>empty().map(Signal::next);
-                    }
-                    return Mono.<RepoModel>just((RepoModel)cacheModel).map(Signal::next);
-                },
+                repo -> tryGetCachedRepo(repo).map(Signal::next),
                 makeCacheKey(owner, repository)
             )
-            .onCacheMissResume(repoApi.getRepo(owner, repository))
+            .onCacheMissResume(repoApi
+                .getRepo(owner, repository)
+                .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty))
+            )
             .andWriteWith((key, signal) -> Mono.fromRunnable(() -> cacheManager.getCache(CACHE).put(key, signal.get())));
     }
 
-    private String makeCacheKey(String owner, String repository) {
+    private Mono<RepoModel> tryGetCachedRepo(String key) {
+        Object cacheModel = null;
+        try {
+            Cache.ValueWrapper cache = Objects.requireNonNull(cacheManager.getCache(CACHE)).get(key);
+            if (cache != null) {
+                cacheModel = cache.get();
+            }
+        } catch (Exception e) { }
+
+        return (cacheModel == null
+            ? Mono.empty()
+            : Mono.just((RepoModel)cacheModel)
+        );
+    }
+
+    private static String makeCacheKey(String owner, String repository) {
         return owner + "/" + repository;
     }
 }
