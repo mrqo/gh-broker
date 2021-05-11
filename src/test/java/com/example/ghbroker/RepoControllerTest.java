@@ -1,5 +1,6 @@
 package com.example.ghbroker;
 
+import com.example.ghbroker.config.ServerConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -13,17 +14,19 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
-
 import static org.mockito.Mockito.times;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = RepoController.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {
+    RepoController.class,
+    ServerConfig.class
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes=RedisConfiguration.class)
 @AutoConfigureWebTestClient
 @EnableAutoConfiguration
 public class RepoControllerTest {
-    private static final String BASE_URL = "http://localhost:8080";
+    @Autowired
+    private ServerConfig serverConfig;
 
     @MockBean
     RepoService service;
@@ -36,17 +39,12 @@ public class RepoControllerTest {
         String user = "mrqo";
         String repoName = "ConvAPI";
 
-        RepoModel model = new RepoModel();
-        model.setId(0);
-        model.setFullName(user + "/" + repoName);
-        model.setDescription("description");
-        model.setCreatedAt(Instant.now());
-        model.setWatchers(3);
+        RepoModel model = RepoTestUtils.createFirstTestModel(user, repoName);
 
         Mockito.when(service.getRepo(user, repoName)).thenReturn(Mono.just(model));
 
         webClient.get()
-            .uri(BASE_URL + "/repo/{owner}/{repository}", user, repoName)
+            .uri(serverConfig.getUri() + "/repo/{owner}/{repository}", user, repoName)
             .exchange()
             .expectStatus().isOk()
             .expectBody()
@@ -66,7 +64,7 @@ public class RepoControllerTest {
         Mockito.when(service.getRepo(user, repoName)).thenReturn(Mono.empty());
 
         webClient.get()
-            .uri(BASE_URL + "/repo/{owner}/{repository}", user, repoName)
+            .uri(serverConfig.getUri() + "/repo/{owner}/{repository}", user, repoName)
             .exchange()
             .expectStatus().isNotFound();
 

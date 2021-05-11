@@ -1,5 +1,6 @@
 package com.example.ghbroker;
 
+import com.example.ghbroker.config.ServerConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,15 @@ import reactivefeign.spring.config.EnableReactiveFeignClients;
 @SpringBootTest(classes = {
     RepoController.class,
     RepoService.class,
+    ServerConfig.class
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes=RedisConfiguration.class)
 @AutoConfigureWebTestClient
 @EnableAutoConfiguration
 @EnableReactiveFeignClients
 public class RepoIT {
-    private static final String BASE_URL = "http://localhost:8080";
+    @Autowired
+    private ServerConfig serverConfig;
 
     @Autowired
     private WebTestClient webClient;
@@ -32,7 +35,7 @@ public class RepoIT {
         String repoName = "spark";
 
         webClient.get()
-            .uri(BASE_URL + "/repo/{owner}/{repository}", user, repoName)
+            .uri(serverConfig.getUri() + "/repo/{owner}/{repository}", user, repoName)
             .exchange()
             .expectStatus().isOk()
             .expectBody()
@@ -47,7 +50,7 @@ public class RepoIT {
         String repoName = "sparkssss2";
 
         webClient.get()
-            .uri(BASE_URL + "/repo/{owner}/{repository}", user, repoName)
+            .uri(serverConfig.getUri() + "/repo/{owner}/{repository}", user, repoName)
             .exchange()
             .expectStatus().isNotFound();
     }
