@@ -14,7 +14,7 @@ public class RepoDto {
 
     private String cloneUrl;
 
-    private int watchers;
+    private int stars;
 
     private Instant createdAt;
 }

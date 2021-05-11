@@ -1,5 +1,6 @@
 package com.example.ghbroker;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
@@ -20,7 +21,8 @@ public class RepoModel implements Serializable {
 
     private String cloneUrl;
 
-    private int watchers;
+    @JsonProperty("watchers")
+    private int stars;
 
     private Instant createdAt;
 }
