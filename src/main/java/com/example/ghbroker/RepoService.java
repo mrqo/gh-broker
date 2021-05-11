@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Service
 public class RepoService {
-    private static String CACHE = "repos";
+    public static String CACHE = "repos";
 
     private RepoServiceApi repoApi;
 
@@ -51,7 +51,7 @@ public class RepoService {
         );
     }
 
-    private static String makeCacheKey(String owner, String repository) {
+    public static String makeCacheKey(String owner, String repository) {
         return owner + "/" + repository;
     }
 }
