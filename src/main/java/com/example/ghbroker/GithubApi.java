@@ -12,7 +12,7 @@ import java.util.Optional;
 @ReactiveFeignClient(name = "repo-api", url = "https://api.github.com", decode404 = true)
 @Headers({ "Accept: application/json" })
 @EnableCaching
-public interface RepoServiceApi {
+public interface GithubApi {
 
     @GetMapping(value = "/repos/{owner}/{repository}")
     Mono<Optional<RepoModel>> getRepo(@RequestParam("owner") String owner, @RequestParam("repository") String repository);

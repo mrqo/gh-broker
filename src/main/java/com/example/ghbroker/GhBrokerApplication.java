@@ -10,6 +10,4 @@ public class GhBrokerApplication {
     public static void main(String[] args) {
         SpringApplication.run(GhBrokerApplication.class, args);
     }
-
-
 }

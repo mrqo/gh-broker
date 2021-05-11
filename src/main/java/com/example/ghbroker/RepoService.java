@@ -1,7 +1,6 @@
 package com.example.ghbroker;
 
 import org.springframework.cache.Cache;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.stereotype.Service;
 import reactor.cache.CacheMono;
@@ -14,11 +13,11 @@ import java.util.Objects;
 public class RepoService {
     public static String CACHE = "repos";
 
-    private RepoServiceApi repoApi;
+    private GithubApi repoApi;
 
     private RedisCacheManager cacheManager;
 
-    public RepoService(RepoServiceApi api, RedisCacheManager cacheManager) {
+    public RepoService(GithubApi api, RedisCacheManager cacheManager) {
         this.repoApi = api;
         this.cacheManager = cacheManager;
     }

@@ -29,7 +29,7 @@ public class RepoCachingTest {
     private RedisCacheManager cacheManager;
 
     @MockBean
-    private RepoServiceApi api;
+    private GithubApi api;
 
     @Test
     void askForNonCachedRepo_ExpectToBeCached() {
